@@ -13,14 +13,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class AuthController {
     constructor(private AuthService:AuthService, private UserService:UserService) {}
 
-    @Post('refresh')
-    @ApiOperation({ summary: 'Обновление Access Токена' })
-    @ApiOkResponse({type: [accessTokenDTO], description: "Данные игрока/игроков"})
-    async refreshAccessToken(@Body() data: refreshAccessTokenDTO){
-        if (!data.refreshToken) { throw new BadRequestException('No token in request')}
-        return this.AuthService.refreshToken(data.refreshToken)
-    }
-
     @Post('register')
     @UseInterceptors(FileInterceptor('data.php'))
     @ApiOperation({summary: 'Регистрация пользователя'})
@@ -33,5 +25,12 @@ export class AuthController {
     @Post('login')
     async login(@Body() data: LoginDTO) {
     return this.AuthService.validateUser(data);
+    }
+
+    @Post('refresh')
+    @ApiOperation({ summary: 'Обновление Access Токена' })
+    @ApiOkResponse({type: [accessTokenDTO], description: "Данные игрока/игроков"})
+    async refreshAccessToken(@Body() data: refreshAccessTokenDTO){
+    return this.AuthService.refreshToken(data.refreshToken)
     }
 }

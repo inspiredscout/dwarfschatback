@@ -11,7 +11,7 @@ export class UserCreateDTO{
     password: string
 
     @ApiPropertyOptional({ type: 'string', format: 'binary', description: 'Фото на аватарку'})
-    pfp: any
+    pfpId: any
 }
 
 export class fullUserDTO extends UserCreateDTO{
@@ -23,5 +23,8 @@ export class fullUserDTO extends UserCreateDTO{
 
     @ApiPropertyOptional({description: 'Рефреш токен'})
     refreshToken: string;
+
+    @ApiProperty({ type: 'string', description: 'Статус юзера' })
+    status: string;
     
 }
