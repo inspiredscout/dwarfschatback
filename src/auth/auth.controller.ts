@@ -1,0 +1,35 @@
+import { BadRequestException, Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthService } from './auth.service';
+import { accessTokenDTO, LoginDTO, refreshAccessTokenDTO } from 'src/models/auth.model';
+import { UserService } from 'src/user/user.service';
+import { fullUserDTO, UserCreateDTO } from 'src/models/user.model';
+import { AuthGuard } from '@nestjs/passport';
+
+@ApiTags('Auth')
+@Controller('auth')
+export class AuthController {
+    constructor(private AuthService:AuthService, private UserService:UserService) {}
+
+    @Post('refresh')
+    @ApiOperation({ summary: 'Обновление Access Токена' })
+    @ApiOkResponse({type: [accessTokenDTO], description: "Данные игрока/игроков"})
+    async refreshAccessToken(@Body() data: refreshAccessTokenDTO){
+        if (!data.refreshToken) { throw new BadRequestException('No token in request')}
+        return this.AuthService.refreshToken(data.refreshToken)
+    }
+
+    @Post('register')
+    @ApiOperation({summary: 'Регистрация пользователя'})
+    @ApiOkResponse({type: fullUserDTO, description: 'Информация о зарегестрированном юзере'})
+    async createUser(@Body() data: UserCreateDTO){
+        if (!data){ throw new BadRequestException}
+        return this.UserService.createUser(data)
+    }
+
+    @UseGuards(AuthGuard('local'))
+    @Post('login')
+    async login(@Body() data: LoginDTO) {
+    return "gg";
+    }
+}
