@@ -3,7 +3,7 @@
 /node_modules
 /build
 pnpm-lock.yaml
-
+/prisma/migrations
 # Logs
 logs
 *.log

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaClient } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
@@ -12,12 +12,12 @@ export class AuthService {
 
     }
 
-    async validateUser(login: string, password: string): Promise<any> {
-        const user = await this.userService.findUser(login);
-        if (user && await bcrypt.compare(password, user.password)) {
+    async validateUser(data): Promise<any> {
+        const user = await this.userService.findUser(data.login);
+        if (user && await bcrypt.compare(data.password, user.password)) {
           const { password, ...result } = user;
           return result;
         }
-        return null;
+        throw new BadRequestException('Auth err');
       }
 }
