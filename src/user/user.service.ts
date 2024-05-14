@@ -20,6 +20,12 @@ export class UserService {
 
     async createUser(data){
         const saltRounds = 10;
+        if (await this.db.users.findFirst({
+            where:{ OR: [
+                {username: data.username},
+                {login: data.login},
+            ]}
+        })) throw new BadRequestException('Этот логин и никнейм уже заняты')
         if (!data.pfp){
             const user = await this.db?.users.create({
                 data:{

@@ -1,10 +1,12 @@
-import { BadRequestException, Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { accessTokenDTO, LoginDTO, refreshAccessTokenDTO } from 'src/models/auth.model';
 import { UserService } from 'src/user/user.service';
 import { fullUserDTO, UserCreateDTO } from 'src/models/user.model';
-import { AuthGuard } from '@nestjs/passport';
+// import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+// import { LocalStrategy } from './local.strategy';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -20,6 +22,7 @@ export class AuthController {
     }
 
     @Post('register')
+    @UseInterceptors(FileInterceptor('data.php'))
     @ApiOperation({summary: 'Регистрация пользователя'})
     @ApiOkResponse({type: fullUserDTO, description: 'Информация о зарегестрированном юзере'})
     async createUser(@Body() data: UserCreateDTO){
@@ -27,9 +30,8 @@ export class AuthController {
         return this.UserService.createUser(data)
     }
 
-    @UseGuards(AuthGuard('local'))
     @Post('login')
     async login(@Body() data: LoginDTO) {
-    return "gg";
+    return this.AuthService.validateUser(data);
     }
 }
