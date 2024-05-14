@@ -4,10 +4,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {v4 as uuid} from 'uuid';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-    constructor( private db:PrismaClient){}
+    constructor( private db:PrismaClient, private jwtService:JwtService){}
 
     async findUser(login){
         const user = await this.db?.users.findFirst({
@@ -59,6 +60,16 @@ export class UserService {
 
         return user
     }
+
+    async getInfo(token){
+        const decoded = this.jwtService.verify(token, { secret: process.env.SECRET });
+        console.log(decoded)
+        const info = await this.db.users.findFirst({
+          where: {id: decoded.id}
+      })
+        if (!info) { throw new BadRequestException('Такого юзера нету')}
+        return info
+      }
 
 
 }
