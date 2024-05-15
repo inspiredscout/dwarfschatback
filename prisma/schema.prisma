@@ -19,7 +19,7 @@ model Users {
   role String @default("user")
   refreshToken RefreshToken?
   username String @unique
-  status String
+  status String?
   login String @unique
   password String
   pfpId String?
