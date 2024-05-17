@@ -23,8 +23,8 @@ model Users {
   login String @unique
   password String
   pfpId String?
-  chats     Chat[]
-  messages  Message[]
+  chats UserChat[]
+  messages Message[]
 }
 
 model RefreshToken {
@@ -39,8 +39,7 @@ model Chat {
   id        String    @id @default(uuid())
   name      String?
   messages  Message[]
-  user      Users      @relation(fields: [userId], references: [id])
-  userId    String
+  users     UserChat[]
 }
 
 model Message {
@@ -51,4 +50,14 @@ model Message {
   timestamp DateTime  @default(now())
   chat      Chat      @relation(fields: [chatId], references: [id])
   chatId    String
+}
+
+model UserChat {
+  id     String @default(uuid()) @id @unique
+  userId String
+  chatId String
+  user   Users @relation(fields: [userId], references: [id])
+  chat   Chat  @relation(fields: [chatId], references: [id])
+
+  @@unique([userId, chatId])
 }
