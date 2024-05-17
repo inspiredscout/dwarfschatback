@@ -3,6 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 // import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { ChatModule } from './chat/chat.module';
 
 export async function setupSwagger(app: INestApplication) {
   if (process.env.SWAGGER == 'TRUE')
@@ -19,7 +20,7 @@ export async function setupSwagger(app: INestApplication) {
 }
 
 @Module({
-  imports:[UserModule, AuthModule],
+  imports:[UserModule, AuthModule, ChatModule],
   controllers: [],
   providers: [],
 })
