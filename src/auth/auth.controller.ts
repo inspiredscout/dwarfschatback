@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Post, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { accessTokenDTO, LoginDTO, refreshAccessTokenDTO } from 'src/models/auth.model';
 import { UserService } from 'src/user/user.service';
@@ -14,7 +14,8 @@ export class AuthController {
     constructor(private AuthService:AuthService, private UserService:UserService) {}
 
     @Post('register')
-    @UseInterceptors(FileInterceptor('data.php'))
+    @UseInterceptors(FileInterceptor('file'))
+    @ApiConsumes('multipart/form-data')
     @ApiOperation({summary: 'Регистрация пользователя'})
     @ApiOkResponse({type: fullUserDTO, description: 'Информация о зарегестрированном юзере'})
     async createUser(@Body() data: UserCreateDTO){
