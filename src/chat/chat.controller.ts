@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ApiTags } from '@nestjs/swagger';
 import { chatDTO } from 'src/models/chat.model';
@@ -18,5 +18,10 @@ export class ChatController {
     @Delete()
     async deleteChat(@Query('id') chatId: string){
         return this.chatService.deleteChat(chatId);
+    }
+
+    @Get()
+    async getChat(@Query('id') chatId: string){
+        return this.chatService.getChat(chatId);
     }
 }

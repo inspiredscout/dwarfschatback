@@ -19,7 +19,7 @@ export class AuthService {
     }
 
       async generateRefreshToken(id: string) {
-        const refreshToken = await this.jwtService.signAsync({ id, tokenType: 'refresh'}, {secret: process.env.RT_SECRET, expiresIn: '30d' })
+        const refrToken = await this.jwtService.signAsync({ id, tokenType: 'refresh'}, {secret: process.env.RT_SECRET, expiresIn: '30d' })
         const oldRT = await this.db?.refreshToken.findUnique({
           where:
           {UsersId:id}})
@@ -32,12 +32,12 @@ export class AuthService {
         }
         const RT = await this.db?.refreshToken.create({
           data: {
-            token: refreshToken,
+            token: refrToken,
             expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Expires in 30 days
             user: { connect: { id: id } }
           }
         });
-        return refreshToken;
+        return RT.token;
     }
 
     async refreshToken(token){
@@ -48,7 +48,7 @@ export class AuthService {
           where:
           {UsersId:decoded.id}})
         if (oldRT && oldRT.token !== token) { throw new BadRequestException('Токен не валид')}
-        const user = await this.userService.findUser(decoded.discordID);
+        const user = await this.userService.findUserById(decoded.id);
         if (!user) {
           throw new UnauthorizedException('Что то не так');
         }
@@ -58,8 +58,8 @@ export class AuthService {
       }
 
     async generateAccessToken(id){
-        const payload = id
-        const access_token = await this.jwtService.signAsync({payload})
+        const payload = {id}
+        const access_token = await this.jwtService.signAsync(payload)
         return access_token
     }
 }

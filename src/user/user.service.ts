@@ -19,6 +19,15 @@ export class UserService {
         return user
     }
 
+    async findUserById(id){
+        const user = await this.db?.users.findFirst({
+            where:{
+                id: id
+            }
+        })
+        return user
+    }
+
     async createUser(data){
         const saltRounds = 10;
         if (await this.db.users.findFirst({
@@ -62,15 +71,91 @@ export class UserService {
     }
 
     async getInfo(token){
-        const decoded = this.jwtService.verify(token, { secret: process.env.SECRET });
-        console.log(decoded)
-        const info = await this.db.users.findFirst({
-          where: {id: decoded.id}
-      })
+        const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET })
+        const info = await this.findUserById(decoded.id)
         if (!info) { throw new BadRequestException('Такого юзера нету')}
         return info
       }
 
+    async changePfp(data, token){
+        console.log(data)
+        const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET });
+        const user = await this.db.users.findFirst({
+            where: {id: decoded.id}
+        })
+        if (!user) { throw new BadRequestException('Такого юзера нету')}
+        const oldPfp = user.pfpId
+        if (!data.pfp){
+            await this.db.users.update({
+                where: {id: user.id},
+                data: {pfpId: undefined}
+            })
+            return true
+        }
+        const file = data.pfp
+        if (!file) {
+          throw new BadRequestException('No file uploaded');
+        }
+        const uploadDir = './uploads';
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir);
+        }
+        const fileExtension = file.originalname.split('.').pop()
+        const newFileName = uuid()+ '.' + fileExtension;
+        const filePath = path.join(uploadDir, newFileName);
+        await fs.promises.writeFile(filePath, file.buffer);
+        await this.db.users.update({
+            where: {id: user.id},
+            data: {pfpId: newFileName}
+        })
+        await fs.unlinkSync(path.join(uploadDir, oldPfp))
+        return true
+    }
 
+    async changePassword(data, token){
+        const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET });
+        const user = await this.db.users.findFirst({
+            where: {id: decoded.id}
+        })
+        if (!user) { throw new BadRequestException('Такого юзера нету')}
+        const saltRounds = 10;
+        await this.db.users.update({
+            where: {id: user.id},
+            data: {password: await bcrypt.hash(data.password, saltRounds)}
+        })
+        return true
+    }
+
+    async changeUsername(data, token){
+        const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET });
+        const user = await this.db.users.findFirst({
+            where: {id: decoded.id}
+        })
+        if (!user) { throw new BadRequestException('Такого юзера нету')}
+        const checkUsername = await this.db.users.findFirst({
+            where:{ OR: [
+                {username: data.username},
+            ]}
+        })
+        if (checkUsername){throw new BadRequestException('Этот никнейм уже занят')}
+        await this.db.users.update({
+            where: {id: user.id},
+            data: {username: data.username}
+        })
+        return true
+    }
+
+    async changeStatus(data, token){
+        const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET });
+        const user = await this.db.users.findFirst({
+            where: {id: decoded.id}
+        })
+        if (!user) { throw new BadRequestException('Такого юзера нету')}
+        await this.db.users.update({
+            where: {id: user.id},
+            data: {status: data.status}
+        })
+        return true
+    }
 }
 

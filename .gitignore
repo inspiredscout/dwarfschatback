@@ -4,6 +4,7 @@
 /build
 pnpm-lock.yaml
 /prisma/migrations
+/uploads
 # Logs
 logs
 *.log

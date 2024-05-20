@@ -27,6 +27,17 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  backend:
+    build:
+      context: .
+      dockerfile: DockerfileBack
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - ./src:/app/src
+      - ./uploads:/app/uploads
 volumes:
 
   postgres_data:

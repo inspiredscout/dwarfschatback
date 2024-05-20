@@ -46,4 +46,13 @@ export class ChatService {
         return true;
 
       }
+
+      async getChat(chatId: string){
+        return this.db.chat.findUnique({
+            where: {
+                id: chatId
+            },
+            include: { messages: true }
+        });
+      }
 }
