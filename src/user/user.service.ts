@@ -107,7 +107,8 @@ export class UserService {
             where: {id: user.id},
             data: {pfpId: newFileName}
         })
-        await fs.unlinkSync(path.join(uploadDir, oldPfp))
+        if (oldPfp){
+        await fs.unlinkSync(path.join(uploadDir, oldPfp))}
         return true
     }
 
