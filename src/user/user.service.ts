@@ -78,7 +78,6 @@ export class UserService {
       }
 
     async changePfp(data, token){
-        console.log(data)
         const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET });
         const user = await this.db.users.findFirst({
             where: {id: decoded.id}
