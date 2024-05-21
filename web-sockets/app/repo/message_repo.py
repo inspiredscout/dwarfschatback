@@ -1,5 +1,5 @@
 from typing import List
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from sqlalchemy import select
 from datetime import datetime
@@ -12,6 +12,7 @@ from app.repo.repo import SQLAlchemyRepo
 class MessageRepo(SQLAlchemyRepo):
     async def save_message(self, user_id: UUID, content: str, chat_id: UUID):
         new_message = Message(
+            id=uuid4(),
             byUserId=user_id,
             content=content,
             timestamp=datetime.now(),

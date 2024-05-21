@@ -11,7 +11,7 @@ class Message(Base):
     __tablename__ = "Message"
 
     id = Column(UUID(as_uuid=True), primary_key=True, index=True)
-    byUserId = Column(UUID(as_uuid=True), ForeignKey('users.id'))
+    byUserId = Column(UUID(as_uuid=True), ForeignKey('Users.id'))
     content = Column(String)
     timestamp = Column(DateTime, default=func.now())
-    chatId = Column(UUID(as_uuid=True), ForeignKey('chat.id'))
+    chatId = Column(UUID(as_uuid=True), ForeignKey('Chat.id'))
