@@ -5,7 +5,7 @@ services:
     container_name: DwarfsDB
     restart: always
     ports:
-      - "5432:5432"
+      - "5431:5432"
     env_file:
       - .env
     volumes:
@@ -17,6 +17,7 @@ services:
       retries: 5
       start_period: 1s
   web-sockets:
+    container_name: DwarfsSockets
     build:
       context: web-sockets
     ports:
@@ -27,7 +28,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - nginx-network
   backend:
+    container_name: DwarfsBack
     build:
       context: .
       dockerfile: DockerfileBack
@@ -39,6 +43,11 @@ services:
     volumes:
       - ./src:/app/src
       - ./uploads:/app/uploads
+    networks:
+      - nginx-network
 volumes:
 
   postgres_data:
+networks:
+  nginx-network:
+    external: true

@@ -15,7 +15,7 @@ export async function setupSwagger(app: INestApplication) {
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api/v1', app, document);
+  SwaggerModule.setup('api/v2', app, document);
 }
 }
 
