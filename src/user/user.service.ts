@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -71,6 +71,9 @@ export class UserService {
     }
 
     async getInfo(token){
+        try {
+            await this.jwtService.verifyAsync(token, { secret: process.env.SECRET })
+        } catch (err) {throw new ForbiddenException('Некорретный токен')}
         const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET })
         const info = await this.findUserById(decoded.id)
         if (!info) { throw new BadRequestException('Такого юзера нету')}
@@ -78,6 +81,9 @@ export class UserService {
       }
 
     async changePfp(data, token){
+        try {
+            await this.jwtService.verifyAsync(token, { secret: process.env.SECRET })
+        } catch (err) {throw new ForbiddenException('Некорретный токен')}
         const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET });
         const user = await this.db.users.findFirst({
             where: {id: decoded.id}
@@ -113,6 +119,9 @@ export class UserService {
     }
 
     async changePassword(data, token){
+        try {
+            await this.jwtService.verifyAsync(token, { secret: process.env.SECRET })
+        } catch (err) {throw new ForbiddenException('Некорретный токен')}
         const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET });
         const user = await this.db.users.findFirst({
             where: {id: decoded.id}
@@ -127,6 +136,9 @@ export class UserService {
     }
 
     async changeUsername(data, token){
+        try {
+            await this.jwtService.verifyAsync(token, { secret: process.env.SECRET })
+        } catch (err) {throw new ForbiddenException('Некорретный токен')}
         const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET });
         const user = await this.db.users.findFirst({
             where: {id: decoded.id}
@@ -146,6 +158,9 @@ export class UserService {
     }
 
     async changeStatus(data, token){
+        try {
+            await this.jwtService.verifyAsync(token, { secret: process.env.SECRET })
+        } catch (err) {throw new ForbiddenException('Некорретный токен')}
         const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET });
         const user = await this.db.users.findFirst({
             where: {id: decoded.id}
