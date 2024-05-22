@@ -16,6 +16,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 1s
+    networks:
+      - nginx-network
   web-sockets:
     container_name: DwarfsSockets
     build:
