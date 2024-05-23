@@ -23,12 +23,12 @@ export class UserController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Изменение аватарки' })
     @ApiOkResponse({ description: 'Returns true if successful', schema: { type: 'boolean' } })
-    @UseInterceptors(FileInterceptor('image'))
+    @UseInterceptors(FileInterceptor('pfp'))
     @ApiConsumes('multipart/form-data')
-    async changePfp(@UploadedFile() file, @Body() data: pfpDTO, @Req() req){
+    async changePfp(@UploadedFile() pfp, @Body() data: pfpDTO, @Req() req){
         if (!req.headers.authorization) {throw new BadRequestException('Токен авторизации отсутсвтует')}
         const token = req.headers.authorization.split(' ')[1];
-        data.pfp = file
+        data.pfp = pfp
         return this.UserService.changePfp(data, token)
     }
 
