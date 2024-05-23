@@ -51,7 +51,7 @@ export class ChatController {
 
     @Put('quit')
     @ApiBearerAuth()
-    @ApiOperation({summary: 'Добавление новых юзеров в чат'})
+    @ApiOperation({summary: 'Выход юзера из чата'})
     @ApiOkResponse({ description: 'Returns true if successful', schema: { type: 'boolean' } })
     async quitChat(@Query('chatId') chatId: string, @Req() req){
         if (!req.headers.authorization) {throw new BadRequestException('Токен авторизации отсутсвтует')}
