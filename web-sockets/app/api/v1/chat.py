@@ -8,7 +8,7 @@ from app.deps.db import CurrentAsyncSession
 from app.repo.message_repo import MessageRepo
 from app.schemas.message import MessageCreate
 from app.models.message import Message
-
+import json
 router = APIRouter(prefix="/chat")
 html = """
 <!DOCTYPE html>
@@ -39,7 +39,11 @@ html = """
                 ws.onmessage = function(event) {
                     var messages = document.getElementById('messages')
                     var message = document.createElement('li')
-                    var content = document.createTextNode(event.data)
+                
+                    var data = JSON.parse(event.data)
+                
+                    var content = document.createTextNode(data.message + " (from user " + data.userId + ")")
+                
                     message.appendChild(content)
                     messages.appendChild(message)
                 };
@@ -88,7 +92,10 @@ class ConnectionManager:
 
     async def broadcast(self, message: str, room_id: UUID, client_id: UUID):
         for connection in self.active_connections[room_id]:
-            await connection.send_text(message)
+            # Create a JSON object with the message and the user id
+            data = json.dumps({"message": message, "userId": str(client_id)})
+            await connection.send_text(data)
+
 
 
 manager = ConnectionManager()
@@ -103,6 +110,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: UUID, room_id: UUI
             print(f"Client #{client_id} sent: {data}")
             print(f"Room #{room_id}")
 
+            #await manager.send_personal_message(f"You wrote: {data}", websocket)
             await manager.broadcast(message=data, room_id=room_id, client_id=client_id)
             message_repo: MessageRepo = MessageRepo(session)
 
