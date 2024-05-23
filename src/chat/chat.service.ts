@@ -8,8 +8,13 @@ import { users } from 'src/models/chat.model';
 export class ChatService {
     constructor (private db:PrismaClient, private jwtService:JwtService){}
 
-    async createChat(data: { name: string, userIds: string[] }){
+    async createChat(data: { name: string, userIds: string[]}, token){
+      try {
+        await this.jwtService.verifyAsync(token, { secret: process.env.SECRET })
+      } catch (err) {throw new ForbiddenException('Некорретный токен')}
         const { name, userIds } = data;
+        const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET })
+        if (!userIds.find(item => item === decoded.id)){throw new BadRequestException('Нельзя создать чат в котором не будет участовать создатель')}
 
         const users = await this.db.users.findMany({
           where: {

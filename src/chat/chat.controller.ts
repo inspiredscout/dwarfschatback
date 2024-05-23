@@ -11,8 +11,11 @@ export class ChatController {
     @Post()
     @ApiOkResponse({type:[fullChatDTO], description: 'Созданный чат'})
     @ApiOperation({summary: 'Создание чата'})
-    async createChat(@Body() data: chatDTO){
-        return this.chatService.createChat(data);
+    @ApiBearerAuth()
+    async createChat(@Body() data: chatDTO, @Req() req){
+        if (!req.headers.authorization) {throw new BadRequestException('Токен авторизации отсутсвтует')}
+        const token = req.headers.authorization.split(' ')[1];
+        return this.chatService.createChat(data, token);
     }
 
     @Delete()

@@ -9,8 +9,9 @@ export async function setupSwagger(app: INestApplication) {
   if (process.env.SWAGGER == 'TRUE')
   {
   const options = new DocumentBuilder()
-    .setTitle('Your API')
-    .setDescription('API description')
+    .setTitle('DwarfsAPI')
+    .setDescription('Супер дока')
+    .addBearerAuth()
     .setVersion('1.0')
     .build();
 
