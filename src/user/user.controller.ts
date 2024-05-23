@@ -8,7 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('user')
 export class UserController {
     constructor(private UserService:UserService){}
-    
+
     @Get('userInfo')
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Получение информации о юзере по токену' })
@@ -67,6 +67,13 @@ export class UserController {
     @ApiOkResponse({type: [userInfoDTO], description: 'Информация о юзере'})
     async findUser(@Query('username') username:string){
         return this.UserService.findUserByUsername(username)
+    }
+
+    @Get('id')
+    @ApiOperation({summary: 'Поиск юзера по айдишнику'})
+    @ApiOkResponse({type: [userInfoDTO], description: 'Информация о юзере'})
+    async findUserId(@Query('id') id:string){
+        return this.UserService.findUserByIdv2(id)
     }
 
 }

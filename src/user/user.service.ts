@@ -194,5 +194,19 @@ export class UserService {
             }
         })
     }
+
+    async findUserByIdv2(id){
+        return this.db.users.findMany({
+            where:{
+                id: id,
+            },
+            select:{
+                id: true,
+                username: true,
+                pfpId: true,
+                status: true
+            }
+        })
+    }
 }
 
