@@ -9,6 +9,7 @@ export class AuthService {
     constructor(private jwtService:JwtService, private db:PrismaClient, private userService:UserService) {}
 
     async validateUser(data): Promise<any> {
+        data.login = data.login.toLowerCase()
         const user = await this.userService.findUser(data.login);
         if (user && await bcrypt.compare(data.password, user.password)) {
             const refreshToken = await this.generateRefreshToken(user.id)

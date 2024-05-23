@@ -11,6 +11,7 @@ export class UserService {
     constructor( private db:PrismaClient, private jwtService:JwtService){}
 
     async findUser(login){
+        login = login.toLowerCase()
         const user = await this.db?.users.findFirst({
             where:{
                 login: login
@@ -38,6 +39,7 @@ export class UserService {
 
     async createUser(data){
         const saltRounds = 10;
+        data.login = data.login.toLowerCase()
         if (await this.db.users.findFirst({
             where:{ OR: [
                 {username: data.username},
