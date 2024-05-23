@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { chatsDTO } from "./chat.model";
 
 export class UserCreateDTO{
     @ApiProperty({ type: 'string', description: 'Никнейм(Уникальный)'})
@@ -23,7 +24,15 @@ export class fullUserDTO extends UserCreateDTO{
 
     @ApiProperty({ type: 'string', description: 'Статус юзера' })
     status: string;
+
+    @ApiProperty()
+    pfpId: string
     
+}
+
+export class superFullUserDTO extends fullUserDTO{
+    @ApiProperty({ type: [chatsDTO], description: 'Чаты пользователя' })
+    chats: chatsDTO[]
 }
 
 export class pfpDTO{

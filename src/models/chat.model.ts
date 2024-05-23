@@ -9,6 +9,13 @@ export class chatDTO{
 
 }
 
+export class smallChatDTO{
+    @ApiProperty()
+    id: string
+    @ApiProperty()
+    name: string
+}
+
 export class fullChatDTO extends chatDTO{
     
     @ApiProperty()
@@ -35,4 +42,15 @@ export class superFullChatDTO extends fullChatDTO{
 
     @ApiProperty()
     messages: string[]
+}
+
+export class chatsDTO{
+    @ApiProperty()
+    id: string
+    @ApiProperty()
+    userId: string
+    @ApiProperty()
+    chatId: string
+    @ApiProperty()
+    chat: smallChatDTO
 }

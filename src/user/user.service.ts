@@ -23,8 +23,16 @@ export class UserService {
         const user = await this.db?.users.findFirst({
             where:{
                 id: id
-            }
-        })
+            },
+            include:{
+                chats:{
+                include:{
+                    chat: {select:{
+                        id: true,
+                        name: true,
+                    }}
+                }}},
+            })
         return user
     }
 

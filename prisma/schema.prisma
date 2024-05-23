@@ -37,7 +37,7 @@ model RefreshToken {
 
 model Chat {
   id        String    @id @default(uuid())
-  name      String?
+  name      String
   PubKey    String
   PrivKey   String
   messages  Message[]
