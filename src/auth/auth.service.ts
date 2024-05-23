@@ -13,7 +13,7 @@ export class AuthService {
         if (user && await bcrypt.compare(data.password, user.password)) {
             const refreshToken = await this.generateRefreshToken(user.id)
             const accessToken = await this.generateAccessToken(user.id)
-            return {RT:refreshToken, token:accessToken};
+            return {refresh_token:refreshToken, access_token:accessToken};
         }
         throw new BadRequestException('Auth err');
     }

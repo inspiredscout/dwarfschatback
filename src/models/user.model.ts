@@ -44,3 +44,17 @@ export class changeStatusDTO{
     @ApiProperty({ type: 'string', description: 'Новый статус'})
     status: string
 }
+
+export class userInfoDTO{
+    @ApiProperty({ type: 'string', description: 'ID юзера' })
+    id: string;
+
+    @ApiProperty({ type: 'string', description: 'Никнейм' })
+    username: string;
+
+    @ApiProperty({ type: 'string', description: 'Статус' })
+    status: string;
+
+    @ApiProperty({ type: 'string', description: 'Аватарка' })
+    pfp: string;
+}

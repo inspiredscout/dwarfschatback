@@ -20,7 +20,7 @@ export class tokensDTO{
     access_token: string;
     
     @ApiProperty({ type: 'string', description: 'Рефреш токен' })
-    refreshToken: string;
+    refresh_token: string;
 }
 
 export class LoginDTO{

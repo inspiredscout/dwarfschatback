@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Post, Put, Query, Req } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { ApiTags } from '@nestjs/swagger';
-import { chatDTO } from 'src/models/chat.model';
+import { ApiBearerAuth, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { chatDTO, fullChatDTO, superFullChatDTO, users } from 'src/models/chat.model';
 
 @ApiTags('Chat')
 @Controller('chat')
@@ -9,19 +9,40 @@ export class ChatController {
     constructor(private readonly chatService: ChatService) {}
 
     @Post()
-    async createChat(
-        @Body() data: chatDTO
-    ){
+    @ApiOkResponse({type:[fullChatDTO], description: 'Созданный чат'})
+    @ApiOperation({summary: 'Создание чата'})
+    async createChat(@Body() data: chatDTO){
         return this.chatService.createChat(data);
     }
 
     @Delete()
-    async deleteChat(@Query('id') chatId: string){
-        return this.chatService.deleteChat(chatId);
+    @ApiOkResponse({ description: 'Returns true if successful', schema: { type: 'boolean' } })
+    @ApiOperation({summary: 'Удаления чата'})
+    @ApiBearerAuth()
+    async deleteChat(@Query('id') chatId: string, @Req() req){
+        if (!req.headers.authorization) {throw new BadRequestException('Токен авторизации отсутсвтует')}
+        const token = req.headers.authorization.split(' ')[1];
+        return this.chatService.deleteChat(chatId, token);
     }
 
     @Get()
-    async getChat(@Query('id') chatId: string){
-        return this.chatService.getChat(chatId);
+    @ApiOkResponse({type: [superFullChatDTO], description: 'Информация о чатах'})
+    @ApiOperation({summary: 'Получение информации о чате'})
+    @ApiBearerAuth()
+    async getChat(@Query('id') chatId: string, @Req() req){
+        if (!req.headers.authorization) {throw new BadRequestException('Токен авторизации отсутсвтует')}
+        const token = req.headers.authorization.split(' ')[1];
+        return this.chatService.getChat(chatId, token);
+    }
+
+    @Put('users')
+    @ApiBearerAuth()
+    @ApiOperation({summary: 'Добавление новых юзеров в чат'})
+    @ApiOkResponse({ description: 'Returns true if successful', schema: { type: 'boolean' } })
+    async updChatUsers(@Body() data: users, @Req() req){
+        if (!req.headers.authorization) {throw new BadRequestException('Токен авторизации отсутсвтует')}
+        const token = req.headers.authorization.split(' ')[1];
+        return this.chatService.updateUsersInChat(data, token);
+        
     }
 }

@@ -1,12 +1,11 @@
-import { BadRequestException, Body, Controller, Get, Header, Put, Req, UploadedFile, UseInterceptors} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Header, Put, Query, Req, UploadedFile, UseInterceptors} from '@nestjs/common';
 import { ApiBearerAuth, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { changePasswordDTO, changeStatusDTO, changeUsernameDTO, fullUserDTO, pfpDTO } from 'src/models/user.model';
+import { changePasswordDTO, changeStatusDTO, changeUsernameDTO, fullUserDTO, pfpDTO, userInfoDTO } from 'src/models/user.model';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User')
 @Controller('user')
-@ApiBearerAuth()
 export class UserController {
     constructor(private UserService:UserService){}
 
@@ -19,6 +18,7 @@ export class UserController {
     // }
 
     @Get('userInfo')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Получение информации о юзере по токену' })
     @ApiOkResponse({type: [fullUserDTO], description: "Данные игрока/игроков"})
     async getInfo(@Req() req){
@@ -28,6 +28,7 @@ export class UserController {
     }
 
     @Put('pfp')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Изменение аватарки' })
     @ApiOkResponse({ description: 'Returns true if successful', schema: { type: 'boolean' } })
     @UseInterceptors(FileInterceptor('image'))
@@ -40,6 +41,7 @@ export class UserController {
     }
 
     @Put('password')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Изменение пароля' })
     @ApiOkResponse({ description: 'Returns true if successful', schema: { type: 'boolean' } })
     async changePassword(@Body() data: changePasswordDTO, @Req() req){
@@ -49,6 +51,7 @@ export class UserController {
     }
 
     @Put('username')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Изменение никнейма' })
     @ApiOkResponse({ description: 'Returns true if successful', schema: { type: 'boolean' } })
     async changeUsername(@Body() data: changeUsernameDTO, @Req() req){
@@ -58,6 +61,7 @@ export class UserController {
     }
 
     @Put('status')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Изменение статуса' })
     @ApiOkResponse({ description: 'Returns true if successful', schema: { type: 'boolean' } })
     async changeStatus(@Body() data: changeStatusDTO, @Req() req){
@@ -65,4 +69,12 @@ export class UserController {
         const token = req.headers.authorization.split(' ')[1];
         return this.UserService.changeStatus(data, token)
     }
+
+    @Get()
+    @ApiOperation({summary: 'Поиск юзера по нику'})
+    @ApiOkResponse({type: [userInfoDTO], description: 'Информация о юзере'})
+    async findUser(@Query('username') username:string){
+        return this.UserService.findUserByUsername(username)
+    }
+
 }
