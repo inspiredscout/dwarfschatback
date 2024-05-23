@@ -67,7 +67,7 @@ export class ChatService {
         where: {
             id: chatId
         },
-        include: { messages: true }
+        include: { messages: true, users: true }
         });
         return true;
 
@@ -145,5 +145,36 @@ export class ChatService {
         });
       
         return true;
+      }
+
+      async chatQuit(chatId:string, token){
+        try {
+          await this.jwtService.verifyAsync(token, { secret: process.env.SECRET })
+        } catch (err) {throw new ForbiddenException('Некорретный токен')}
+        const decoded = await this.jwtService.verifyAsync(token, { secret: process.env.SECRET})
+        const chat = await this.db.chat.findFirst({
+          where: {
+            id: chatId,
+            users: {
+              some: {
+                userId: decoded.id
+              }
+            }
+          }
+        });
+        if (!chat){ throw new BadRequestException('Что-то не так')}
+        const users = await this.db.users.findMany({
+          where: { id: decoded.id }
+        });
+        if (!users) {
+          throw new NotFoundException('Один или несколько пользователей не найдены');
+        }
+        await this.db.userChat.deleteMany({
+          where:{
+            chatId: chatId,
+            userId: decoded.id
+          }
+        })
+        return true
       }
 }

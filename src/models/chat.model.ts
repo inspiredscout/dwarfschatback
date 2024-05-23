@@ -9,6 +9,11 @@ export class chatDTO{
 
 }
 
+export class chatId{
+    @ApiProperty()
+    chatId: string
+}
+
 export class smallChatDTO{
     @ApiProperty()
     id: string

@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Delete, Get, Post, Put, Query, Req } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ApiBearerAuth, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { chatDTO, fullChatDTO, superFullChatDTO, users } from 'src/models/chat.model';
+import { chatDTO, chatId, fullChatDTO, superFullChatDTO, users } from 'src/models/chat.model';
 
 @ApiTags('Chat')
 @Controller('chat')
@@ -47,5 +47,15 @@ export class ChatController {
         const token = req.headers.authorization.split(' ')[1];
         return this.chatService.updateUsersInChat(data, token);
         
+    }
+
+    @Put('quit')
+    @ApiBearerAuth()
+    @ApiOperation({summary: 'Добавление новых юзеров в чат'})
+    @ApiOkResponse({ description: 'Returns true if successful', schema: { type: 'boolean' } })
+    async quitChat(@Query('chatId') chatId: string, @Req() req){
+        if (!req.headers.authorization) {throw new BadRequestException('Токен авторизации отсутсвтует')}
+        const token = req.headers.authorization.split(' ')[1];
+        return this.chatService.chatQuit(chatId, token);
     }
 }

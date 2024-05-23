@@ -50,7 +50,7 @@ model Message {
   byUserId  String
   content   String?
   timestamp DateTime  @default(now())
-  chat      Chat      @relation(fields: [chatId], references: [id])
+  chat      Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
   chatId    String
 }
 
@@ -59,7 +59,7 @@ model UserChat {
   userId String
   chatId String
   user   Users @relation(fields: [userId], references: [id])
-  chat   Chat  @relation(fields: [chatId], references: [id])
+  chat   Chat  @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   @@unique([userId, chatId])
 }
