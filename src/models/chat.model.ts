@@ -28,6 +28,19 @@ export class fullChatDTO extends chatDTO{
     PubKey: string
 }
 
+export class messages{
+    @ApiProperty()
+    id: string
+    @ApiProperty()
+    byUserId: string
+    @ApiProperty()
+    content: string
+    @ApiProperty()
+    timestamp: Date
+    @ApiProperty()
+    chatId: string
+}
+
 export class users{
     @ApiProperty()
     userIds: string[]
@@ -36,21 +49,24 @@ export class users{
     id: string
 }
 
-export class superFullChatDTO extends fullChatDTO{
-    @ApiProperty()
-    users: string[]
-
-    @ApiProperty()
-    messages: string[]
-}
-
-export class chatsDTO{
+export class chatUsers{
     @ApiProperty()
     id: string
     @ApiProperty()
-    userId: string
+    userid: string
     @ApiProperty()
     chatId: string
+}
+
+export class superFullChatDTO extends fullChatDTO{
+    @ApiProperty({type: [chatUsers]})
+    users: chatUsers[]
+
+    @ApiProperty({type: [messages]})
+    messages: messages[]
+}
+
+export class chatsDTO extends chatUsers{
     @ApiProperty()
     chat: smallChatDTO
 }
