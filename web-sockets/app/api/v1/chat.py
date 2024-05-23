@@ -117,8 +117,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: UUID, room_id: UUI
             await message_repo.save_message(user_id=client_id, content=data, chat_id=room_id)
     except WebSocketDisconnect:
         manager.disconnect(websocket, room_id)
-        await manager.broadcast(f"Client #{client_id} left the chat", room_id,
-                                client_id)
         try:
             await websocket.close()
         except RuntimeError:
