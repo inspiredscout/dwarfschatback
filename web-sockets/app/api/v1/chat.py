@@ -103,20 +103,18 @@ async def websocket_endpoint(websocket: WebSocket, client_id: UUID, room_id: UUI
             print(f"Client #{client_id} sent: {data}")
             print(f"Room #{room_id}")
 
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(message=data, room_id=room_id, client_id=client_id)  # передаем client_id в broadcast
+            await manager.broadcast(message=data, room_id=room_id, client_id=client_id)
             message_repo: MessageRepo = MessageRepo(session)
 
             await message_repo.save_message(user_id=client_id, content=data, chat_id=room_id)
     except WebSocketDisconnect:
         manager.disconnect(websocket, room_id)
         await manager.broadcast(f"Client #{client_id} left the chat", room_id,
-                                client_id)  # передаем client_id в broadcast
-        # Close the connection
+                                client_id)
         try:
             await websocket.close()
         except RuntimeError:
-            pass  # Connection is already closed
+            pass
 
 
 @router.get("/main")
